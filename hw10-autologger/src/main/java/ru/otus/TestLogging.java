@@ -9,5 +9,5 @@ public interface TestLogging {
 
     void doNotLogCalculation(int param1, int param2);
 
-    void doNotLogCalculation2(int param1, int param2);
+    void calculation2(String param1, int param2);
 }
