@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+dependencies {
+}
+
+apply plugin : "java"
+ext {
+    javaMainClass = "ru.otus.gc.GcMain"
+    jvmMemory = "256m"
+    jvmGc = "G1GC"
+//    jvmGc = "ParallelGC"
+//    jvmGc = "SerialGC"
+}
+
+application {
+    mainClassName = javaMainClass
+    applicationDefaultJvmArgs = ["-Xms${jvmMemory}", "-Xmx${jvmMemory}", "-XX:+Use${jvmGc}"]
+}
