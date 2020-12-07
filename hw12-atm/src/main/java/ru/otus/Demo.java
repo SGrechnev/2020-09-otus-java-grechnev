@@ -8,13 +8,6 @@ import ru.otus.atm.exception.ATMException;
 import java.util.Map;
 
 public class Demo {
-    /*private final static String GET_MONEY_MSG_TEMPLATE = """
-            |     Get money
-            | ATM before: %s
-            | ATM before: %s
-            | ReceivedBills:  %s
-            | BalanceBefore = %d RUB
-            | BalanceAfter  = %d RUB""";*/
 
     public static void main(String[] args) {
         // Create ATM

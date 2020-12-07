@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class ATMImplTest {
 
     ATM atm;
+    ATMCalculator atmCalculator = new ATMCalculatorImpl();
 
     private static final Map<Banknote, Integer> INITIALIZING_MAP = Map.of(
             Banknote.B2000, 2,
@@ -80,7 +81,7 @@ class ATMImplTest {
         // Correct sum
         assertEquals(
                 requestedAmount,
-                ATMImpl.getBalance(this.atm.getMyMoney(requestedAmount))
+                atmCalculator.getBalance(this.atm.getMyMoney(requestedAmount))
         );
         // Correct state
         assertEquals(balanceBefore - requestedAmount, this.atm.getBalance());
