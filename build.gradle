@@ -28,6 +28,12 @@ allprojects {
         dependencies {
             dependency("com.google.guava:guava:${Versions.guava}")
             dependency("org.junit.jupiter:junit-jupiter:${Versions.junit_jupiter}")
+            dependency ('org.junit.jupiter:junit-jupiter-api:latest.release')
+            dependency ('org.junit.jupiter:junit-jupiter-engine:latest.release')
+            dependency ('org.junit.jupiter:junit-jupiter-params:latest.release')
+            dependency ('org.assertj:assertj-core:latest.release')
+            dependency ('org.mockito:mockito-core:latest.release')
+            dependency ('org.mockito:mockito-junit-jupiter:latest.release')
         }
     }
 }
