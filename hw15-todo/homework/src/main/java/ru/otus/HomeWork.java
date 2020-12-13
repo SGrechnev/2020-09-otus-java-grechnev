@@ -8,6 +8,7 @@ import ru.otus.model.ObjectForMessage;
 import ru.otus.processor.homework.ProcessorSwapField11Field12;
 import ru.otus.processor.homework.ProcessorThrowExceptionInEvenSecond;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HomeWork {
@@ -34,10 +35,16 @@ public class HomeWork {
         var listenerHistory = new ListenerHistory();
         complexProcessor.addListener(listenerHistory);
 
+        List<String> data = new ArrayList<>();
+        data.add("s1");
+        data.add("s2");
+        var f13 = new ObjectForMessage();
+        f13.setData(data);
+
         var message = new Message.Builder(1L)
                 .field11("field-11")
                 .field12("FIELD-12")
-                .field13(new ObjectForMessage())
+                .field13(f13)
                 .build();
 
         var result = complexProcessor.handle(message);
@@ -52,6 +59,8 @@ public class HomeWork {
         result = complexProcessor.handle(result);
         System.out.println("result:" + result);
 
+        listenerHistory.printHistory();
+        data.add("AHAHHAHAHAHAHHAHAHAHAHHAHAHAHAHHAHAHAHAHHAHAHAHAHHAHAHAHAHHAHAHAHAHHAHAHAHAHHAHAHAHAHHAHAHAHAHHAHAHAHAHHAHAHAHAHHAHAHAHAHHAHAHAHAHHAHAH");
         listenerHistory.printHistory();
         complexProcessor.removeListener(listenerHistory);
     }

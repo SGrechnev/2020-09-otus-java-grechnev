@@ -1,5 +1,7 @@
 package ru.otus.model;
 
+import java.util.List;
+
 public class Message {
     private final long id;
     private final String field1;
@@ -32,7 +34,7 @@ public class Message {
         this.field10 = field10;
         this.field11 = field11;
         this.field12 = field12;
-        this.field13 = field13;
+        this.field13 = field13.getCopy();
     }
 
     public long getId() {
@@ -88,7 +90,7 @@ public class Message {
     }
 
     public ObjectForMessage getField13() {
-        return field13;
+        return this.field13.getCopy();
     }
 
     @Override
