@@ -24,8 +24,8 @@ public class ListenerHistory implements Listener {
         private final Message newMsg;
 
         public Record(Message oldMsg, Message newMsg) {
-            this.oldMsg = oldMsg;
-            this.newMsg = newMsg;
+            this.oldMsg = oldMsg.clone();
+            this.newMsg = newMsg.clone();
         }
 
         public Message getOldMsg() {
