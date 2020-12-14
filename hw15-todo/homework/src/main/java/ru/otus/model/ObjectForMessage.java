@@ -1,12 +1,12 @@
 package ru.otus.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class ObjectForMessage {
+public class ObjectForMessage implements Cloneable {
     private List<String> data;
 
-    public ObjectForMessage getCopy() {
+    @Override
+    public ObjectForMessage clone() {
         var objForMessage = new ObjectForMessage();
         if (this.data != null) {
             objForMessage.setData(List.copyOf(this.data));
