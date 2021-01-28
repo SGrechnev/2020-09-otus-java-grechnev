@@ -1,5 +1,8 @@
 package ru.otus.gson;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -8,85 +11,76 @@ import java.util.*;
 import javax.json.*;
 
 public class MyGson {
+    private static final Logger logger = LoggerFactory.getLogger(MyGson.class);
+
+    private static final int MAX_RECURSION_DEPTH = 4;
 
     public String toJson(Object obj) {
-        return toJsonValue(obj).toString();
+        if (obj != null) {
+            logger.debug("classname: " + obj.getClass().getName());
+        }
+        return toJsonValue(obj, 0).toString();
     }
 
-    public JsonValue toJsonValue(Object obj) {
+    private JsonValue toJsonValue(Object obj, int recursionDepth) {
+        if (recursionDepth > MAX_RECURSION_DEPTH) {
+            throw new RecursionException("Recursion depth is too large: " + recursionDepth);
+        }
+        String indent = "  ".repeat(recursionDepth);
         if (obj == null) {
+            logger.debug(indent + "process null");
             return JsonValue.NULL;
+        } else if (obj.getClass().isArray()) {
+            logger.debug(indent + "process array");
+            return processArray(obj, recursionDepth);
+        } else if (obj instanceof java.util.Collection) {
+            logger.debug(indent + "process Collection");
+            return processArray(((Collection<?>) obj).toArray(), recursionDepth);
+        } else if (obj instanceof Byte || obj instanceof Short || obj instanceof Integer || obj instanceof Long) {
+            logger.debug(indent + "process integer number");
+            return Json.createValue(Long.parseLong(obj.toString()));
+        } else if (obj instanceof Boolean) {
+            logger.debug(indent + "process boolean");
+            return obj.equals(true) ? JsonValue.TRUE : JsonValue.FALSE;
+        } else if (obj instanceof Float || obj instanceof Double) {
+            logger.debug(indent + "process float or double");
+            return Json.createValue(Double.parseDouble(obj.toString()));
+        } else if (obj instanceof String || obj instanceof Character) {
+            logger.debug(indent + "process string");
+            return Json.createValue(obj.toString());
         }
 
-        var builder = Json.createObjectBuilder();
+        logger.debug(indent + "process object");
+        var fields = obj.getClass().getDeclaredFields();
+        logger.trace(indent + "fields: " + Arrays.toString(fields));
 
-        for (Field field : obj.getClass().getDeclaredFields()) {
+        var subBuilder = Json.createObjectBuilder();
+        for (Field field : fields) {
             if (Modifier.isTransient(field.getModifiers())) {
                 continue;
             }
             try {
                 field.setAccessible(true);
-                processField(field, field.get(obj), builder);
+                logger.debug(indent + " process field " + field.getType().getSimpleName() + " " + field.getName());
+                subBuilder.add(field.getName(), toJsonValue(field.get(obj), recursionDepth + 1));
             } catch (IllegalAccessException e) {
                 System.out.println(e.getMessage());
                 throw new RuntimeException(e);
             }
         }
-        return builder.build();
+        return subBuilder.build();
     }
 
-    private void processField(Field field, Object value, JsonObjectBuilder builder) {
-        String fieldName = field.getName();
-        if (isArray(field)) {
-            builder.add(fieldName, Json.createArrayBuilder(getListFromArray(value)));
-        } else if (isIntegerNumber(field)) {
-            builder.add(fieldName, Long.parseLong(value.toString()));
-        } else if (isFloatNumber(field)) {
-            builder.add(fieldName, Double.parseDouble(value.toString()));
-        } else if (isString(field)) {
-            builder.add(fieldName, value.toString());
-        } else if (isBoolean(field)) {
-            builder.add(fieldName, value.equals(true) ? JsonValue.TRUE : JsonValue.FALSE);
-        } else if (isCollection(field)) {
-            builder.add(fieldName, Json.createArrayBuilder(getListFromArray(((Collection<Object>) value).toArray())));
-        } else {
-            builder.add(fieldName, toJsonValue(value));
+    private JsonArray processArray(Object array, int recursionDepth) {
+        if (!array.getClass().isArray()) {
+            throw new IllegalArgumentException("Expected array, consumed " + array.getClass().getName());
         }
-    }
 
-    private static boolean isIntegerNumber(Field field) {
-        return Set.of(Byte.class, Byte.TYPE, Long.class, Long.TYPE, Short.class, Short.TYPE, Integer.class, Integer.TYPE)
-                .contains(field.getType());
-    }
-
-    private static boolean isFloatNumber(Field field) {
-        return Set.of(Double.TYPE, Double.class, Float.TYPE, Float.class).contains(field.getType());
-    }
-
-    private static boolean isBoolean(Field field) {
-        return (field.getType().equals(Boolean.TYPE));
-    }
-
-    private static boolean isString(Field field) {
-        return Set.of(String.class, Character.TYPE).contains(field.getType());
-    }
-
-    private static boolean isCollection(Field field) {
-        return field.getType().equals(Collection.class);
-    }
-
-    private static boolean isArray(Field field) {
-        return (field.getType().isArray());
-    }
-
-    private static List<Object> getListFromArray(Object array) {
-        if (array.getClass().isArray()) {
-            List<Object> objectList = new ArrayList<>();
-            for (int i = 0; i < Array.getLength(array); i++) {
-                objectList.add(Array.get(array, i));
-            }
-            return objectList;
+        var arrayBuilder = Json.createArrayBuilder();
+        for (int i = 0; i < Array.getLength(array); i++) {
+            arrayBuilder.add(toJsonValue(Array.get(array, i), recursionDepth + 1));
         }
-        return null;
+
+        return arrayBuilder.build();
     }
 }
