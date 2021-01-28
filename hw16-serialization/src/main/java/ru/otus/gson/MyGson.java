@@ -56,7 +56,7 @@ public class MyGson {
 
         var subBuilder = Json.createObjectBuilder();
         for (Field field : fields) {
-            if (Modifier.isTransient(field.getModifiers())) {
+            if (Modifier.isTransient(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) {
                 continue;
             }
             try {
