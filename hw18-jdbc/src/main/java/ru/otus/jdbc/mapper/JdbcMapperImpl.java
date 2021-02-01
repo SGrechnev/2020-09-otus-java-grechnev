@@ -57,18 +57,17 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
     @Override
     public T findById(Object id, Class<T> clazz) {
         String query = this.entitySQLMetaData.getSelectByIdSql();
-        this.entityClassMetaData.getIdField();
         logger.info("Select query:  " + query);
         try {
             return dbExecutor.executeSelect(getConnection(), query,
-                    id, rs -> processResultSet(rs, clazz)).orElse(null);
+                    id, this::processResultSet).orElse(null);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
             throw new RuntimeException(throwables);
         }
     }
 
-    private T processResultSet(ResultSet rs, Class<T> clazz) {
+    private T processResultSet(ResultSet rs) {
         try {
             if (rs.next()) {
                 Constructor<T> tConstructor = this.entityClassMetaData.getConstructor();

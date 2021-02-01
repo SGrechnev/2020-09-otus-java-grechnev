@@ -7,22 +7,52 @@ import ru.otus.core.Id;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
     private static final Logger logger = LoggerFactory.getLogger(EntityClassMetaDataImpl.class);
-    Class<T> capturedType;
+    private final Class<T> capturedType;
+    private final String name;
+    private final List<Field> fields;
+    private final Field idField;
+    private final List<Field> fieldsWithoutId;
 
     public EntityClassMetaDataImpl(Class<T> toCaptureType) {
         this.capturedType = toCaptureType;
-        logger.debug("Captured type: " + this.capturedType);
+        logger.debug("Captured type: {}", this.capturedType);
+
+        this.name = capturedType.getSimpleName().toLowerCase();
+        logger.trace("Table name: {}", this.name);
+
+        Field[] fields = capturedType.getDeclaredFields();
+        this.fields = Arrays.stream(fields)
+                .filter(EntityClassMetaDataImpl::serializable)
+                .collect(Collectors.toList());
+
+        var idList = this.fields.stream().filter(field -> field.isAnnotationPresent(Id.class)).collect(Collectors.toList());
+        if(idList.size() != 1){
+            String sIdList = idList.stream() // id field names
+                    .map(Field::getName)
+                    .collect(Collectors.joining(", "));
+            throw new JdbcException(String.format("%s has %d id fields, expected 1. Id fields: [%s]",
+                    this.capturedType.getName(),
+                    idList.size(),
+                    sIdList)
+            );
+        }
+        this.idField = idList.get(0);
+
+        this.fieldsWithoutId = new ArrayList<>(this.fields);
+        this.fieldsWithoutId.remove(this.idField);
     }
 
     @Override
     public String getName() {
-        return capturedType.getSimpleName().toLowerCase();
+        return this.name;
     }
 
     @Override
@@ -36,25 +66,17 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
 
     @Override
     public Field getIdField() {
-        List<Field> fields = this.getAllFields();
-        var idFields = fields.stream().filter(field -> field.isAnnotationPresent(Id.class));
-        return idFields.findFirst().get();
+        return this.idField;
     }
 
     @Override
     public List<Field> getAllFields() {
-        Field[] fields = capturedType.getDeclaredFields();
-        return Arrays.stream(fields)
-                .filter(EntityClassMetaDataImpl::serializable)
-                .collect(Collectors.toList());
+        return new ArrayList<>(this.fields);
     }
 
     @Override
     public List<Field> getFieldsWithoutId() {
-        var fields = getAllFields();
-        var fieldId = getIdField();
-        fields.remove(fieldId);
-        return fields;
+        return new ArrayList<>(this.fieldsWithoutId);
     }
 
     private static boolean serializable(Field field) {
