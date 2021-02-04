@@ -1,1 +1,3 @@
 rootProject.name = 'otusJava'
+
+include "hw20-hibernate"
