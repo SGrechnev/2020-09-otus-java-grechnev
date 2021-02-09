@@ -4,9 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.WeakHashMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -18,8 +16,12 @@ public class MyCache<K, V> implements HwCache<K, V> {
     private static final Logger logger = LoggerFactory.getLogger(MyCache.class);
 
     //Надо реализовать эти методы
-    private final WeakHashMap<K, V> innerMap = new WeakHashMap<>();
+    private final Map<K, V> innerMap;
     private final List<WeakReference<HwListener<K, V>>> listeners = new ArrayList<>();
+
+    public MyCache(Map<K, V> map){
+        this.innerMap = map;
+    }
 
     @Override
     public void put(K key, V value) {

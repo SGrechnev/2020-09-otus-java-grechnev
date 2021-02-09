@@ -3,10 +3,7 @@ package ru.otus.cachehw;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.WeakHashMap;
 
 /**
  * @author sergey
@@ -25,7 +22,7 @@ public class HWCacheDemo {
     }
 
     private void demo() throws InterruptedException {
-        HwCache<Integer, Integer> cache = new MyCache<>();
+        HwCache<Integer, Integer> cache = new MyCache<>(new WeakHashMap<>());
 
         // пример, когда Idea предлагает упростить код, при этом может появиться "спец"-эффект
         HwListener<Integer, Integer> listener = new HwListener<Integer, Integer>() {
@@ -47,8 +44,10 @@ public class HWCacheDemo {
         // Check that listener removed
         cache.put(2, 2);
 
+        /** Check WeakReference in listeners
+         *  listener2 is local variable for next block
+         */
         {
-            // Check WeakReference in listeners
             HwListener<Integer, Integer> listener2 = new HwListener<Integer, Integer>() {
                 @Override
                 public void notify(Integer key, Integer value, String action) {
@@ -59,16 +58,8 @@ public class HWCacheDemo {
             cache.put(3,3);
         }
         logger.info("local variable 'listener2' is forgotten (x_x)");
-        logger.info("So strange...");
-        Thread.sleep(1000);
-        System.gc();
-        cache.put(4,4);
-        Thread.sleep(1000);
-        System.gc();
-        cache.put(5,5);
-        for (int i = 6; i < 10; i++) {
+        for (int i = 4; i < 5; i++) {
             System.gc();
-            Thread.sleep(100);
             cache.put(i, i);
         }
     }
