@@ -31,12 +31,11 @@ public class MyCache<K, V> implements HwCache<K, V> {
 
     @Override
     public void remove(K key) {
-        var value = innerMap.get(key);
+        var value = innerMap.remove(key);
         if (value == null){
             // Элемент по ключу не найден
             return;
         }
-        innerMap.remove(key);
         notifyAndShrink(key, value, "remove");
     }
 
@@ -51,7 +50,6 @@ public class MyCache<K, V> implements HwCache<K, V> {
     public void addListener(HwListener<K, V> listener) {
         if (listenersHas(listener)){
             logger.info("listener is already in list");
-            return;
         } else {
             listeners.add(new WeakReference<>(listener));
             logger.info("listener was added");
@@ -61,24 +59,30 @@ public class MyCache<K, V> implements HwCache<K, V> {
     @Override
     public void removeListener(HwListener<K, V> listener) {
         var weakListenersToRemove = listeners.stream()
-                .filter(l -> l.get()==listener)
+                .filter(l -> listener.equals(l.get()))
                 .collect(Collectors.toList());
         listeners.removeAll(weakListenersToRemove);
         logger.info("listener was removed");
     }
 
-    private boolean listenersHas(HwListener<K,V> listener){
-        return listeners.stream().reduce(
-                false,
-                (acc, l) -> acc || (l.get().equals(listener)),
-                (acc, bool) -> acc || bool);
+    private boolean listenersHas(HwListener<K, V> listener) {
+        for (var listener_ : listeners) {
+            if (listener.equals(listener_.get())) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    private void notifyAndShrink(K key, V value, String action){
-        for(var iterator = listeners.iterator(); iterator.hasNext();){
+    private void notifyAndShrink(K key, V value, String action) {
+        for (var iterator = listeners.iterator(); iterator.hasNext(); ) {
             var listener = iterator.next().get();
             if (listener != null) {
-                listener.notify(key, value, action);
+                try {
+                    listener.notify(key, value, action);
+                } catch (Throwable e) {
+                    logger.error("Error occurred during notification: {}", e.getMessage());
+                }
             } else {
                 logger.info("Forget removed listener");
                 iterator.remove();

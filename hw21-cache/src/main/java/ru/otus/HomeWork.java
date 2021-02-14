@@ -11,6 +11,7 @@ import ru.otus.core.model.Client;
 import ru.otus.core.model.PhoneDataSet;
 import ru.otus.core.service.DBServiceClient;
 import ru.otus.core.service.DbServiceClientImpl;
+import ru.otus.core.service.DbServiceClientWithCacheImpl;
 import ru.otus.flyway.MigrationsExecutorFlyway;
 import ru.otus.hibernate.HibernateUtils;
 import ru.otus.hibernate.dao.ClientDaoHibernate;
@@ -28,33 +29,45 @@ public class HomeWork {
         logger.info("=================== DEMO SPEED ===================");
         demoSpeed();
         logger.info("=================== DEMO  FREE ===================");
-        demoFree(true);
-        demoFree(false);
+        demoFree();
     }
 
     public static void demoSpeed() {
-        DBServiceClient dbServiceClient = prepareDBServiceClient(true);
-        var time_with_cache = dbServiceClientSpeed(dbServiceClient, true, 50);
-        var time_without_cache = dbServiceClientSpeed(dbServiceClient, false, 50);
+        var clientDao = prepareClientDao();
+
+        var dbServiceClientWithoutCache = new DbServiceClientImpl(clientDao);
+        var dbServiceClientWithCache = new DbServiceClientWithCacheImpl(new MyCache<>(new WeakHashMap<>()), clientDao);
+
+        // Warm up
+        dbServiceClientSpeed(dbServiceClientWithoutCache, 20);
+
+        Long time_with_cache = dbServiceClientSpeed(dbServiceClientWithCache, 50);
+        Long time_without_cache = dbServiceClientSpeed(dbServiceClientWithoutCache, 50);
 
         logger.info("With cache    time: {}ms", time_with_cache);
         logger.info("Without cache time: {}ms", time_without_cache);
     }
 
-    public static void demoFree(boolean useWeakHashMap) {
-        logger.info("useWeakHashMap is {}", useWeakHashMap);
-        DBServiceClient dbServiceClient = prepareDBServiceClient(useWeakHashMap);
-        dbServiceClient.setUseCache(true);
+    public static void demoFree() {
+        var clientDao = prepareClientDao();
+        var dbServiceClientWithWeakCache = new DbServiceClientWithCacheImpl(new MyCache<>(new WeakHashMap<>()), clientDao);
+        var dbServiceClientWithStrongCache = new DbServiceClientWithCacheImpl(new MyCache<>(new HashMap<>()), clientDao);
 
-        var address = new AddressDataSet("S".repeat(1024));
+        final var address = new AddressDataSet("S".repeat(1024));
         int BENCH_SIZE = 6 * 1024;
+
+        logger.info("Start dbServiceClientWithWeakCache");
         for (int i = 0; i < BENCH_SIZE; i++) {
-            dbServiceClient.saveClient(new Client(i + "N".repeat(1024), address));
+            dbServiceClientWithWeakCache.saveClient(new Client(i + "N".repeat(1024), address));
+        }
+
+        logger.info("Start dbServiceClientWithStrongCache");
+        for (int i = 0; i < BENCH_SIZE; i++) {
+            dbServiceClientWithStrongCache.saveClient(new Client(i + "N".repeat(1024), address));
         }
     }
 
-    private static Long dbServiceClientSpeed(DBServiceClient dbServiceClient, boolean useCache, int bench_size) {
-        dbServiceClient.setUseCache(useCache);
+    private static Long dbServiceClientSpeed(DBServiceClient dbServiceClient, int bench_size) {
         long delta = 0, curTime;
 
         List<Client> clients_ = new ArrayList<>();
@@ -73,7 +86,7 @@ public class HomeWork {
         return delta;
     }
 
-    public static DBServiceClient prepareDBServiceClient(boolean useWeakHaskMap) {
+    public static ClientDao prepareClientDao() {
         Configuration configuration = new Configuration().configure(HIBERNATE_CFG_FILE);
 
         String dbUrl = configuration.getProperty("hibernate.connection.url");
@@ -85,14 +98,6 @@ public class HomeWork {
 
         SessionFactory sessionFactory = HibernateUtils.buildSessionFactory(configuration, Client.class, AddressDataSet.class, PhoneDataSet.class);
         SessionManagerHibernate sessionManager = new SessionManagerHibernate(sessionFactory);
-        ClientDao userDao = new ClientDaoHibernate(sessionManager);
-
-        Map<Long, Client> innerMap;
-        if (useWeakHaskMap) {
-            innerMap = new WeakHashMap<>();
-        } else {
-            innerMap = new HashMap<>();
-        }
-        return new DbServiceClientImpl(new MyCache<>(innerMap), userDao);
+        return (ClientDao) new ClientDaoHibernate(sessionManager);
     }
 }
