@@ -1,0 +1,37 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+sourceCompatibility = JavaVersion.VERSION_15
+targetCompatibility = JavaVersion.VERSION_15
+
+dependencies {
+    implementation 'org.slf4j:slf4j-api'
+    implementation 'ch.qos.logback:logback-classic'
+    implementation 'org.ehcache:ehcache'
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'org.hibernate:hibernate-core'
+    implementation 'org.postgresql:postgresql'
+    implementation 'com.google.code.gson:gson'
+
+    implementation("org.eclipse.jetty:jetty-servlet:${Versions.jetty}")
+    implementation("org.eclipse.jetty:jetty-server:${Versions.jetty}")
+    implementation("org.eclipse.jetty:jetty-webapp:${Versions.jetty}")
+    implementation("org.eclipse.jetty:jetty-security:${Versions.jetty}")
+    implementation("org.eclipse.jetty:jetty-http:${Versions.jetty}")
+    implementation("org.eclipse.jetty:jetty-io:${Versions.jetty}")
+    implementation("org.eclipse.jetty:jetty-util:${Versions.jetty}")
+    implementation("org.freemarker:freemarker:${Versions.freemarker}")
+}
+
+apply plugin: "java"
+ext {
+    javaMainClass = "ru.otus.HomeWork"
+    jvmMemory = "16m"
+}
+
+application {
+    mainClassName = javaMainClass
+    applicationDefaultJvmArgs = ["-Xms${jvmMemory}", "-Xmx${jvmMemory}"]
+}
