@@ -8,6 +8,7 @@ import ru.otus.appcontainer.api.AppComponentsContainerConfig;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,12 +25,7 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
     private void processConfig(Class<?> configClass) {
         checkConfigClass(configClass);
         // You code here...
-        Object configClassInstance;
-        try {
-            configClassInstance = configClass.getConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
+        Object configClassInstance = createConfigClassInstance(configClass);
 
         List<Method> beanGenerators = Arrays.asList(configClass.getDeclaredMethods());
         beanGenerators.sort(Comparator.comparingInt(m -> m.getAnnotation(AppComponent.class).order()));
@@ -49,51 +45,19 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
 
     private Object createBean(Object configClassInstance, Method generator) throws InvocationTargetException, IllegalAccessException {
         var params = generator.getParameters();
-        switch (params.length) {
-            case 0:
-                return generator.invoke(configClassInstance);
-            case 1:
-                logger.debug("param0: " + getAppComponent(params[0].getType()));
-                return generator.invoke(configClassInstance,
-                        getAppComponent(params[0].getType()));
-            case 2:
-                logger.debug("param0: " + getAppComponent(params[0].getType()));
-                logger.debug("param1: " + getAppComponent(params[1].getType()));
-                return generator.invoke(configClassInstance,
-                        getAppComponent(params[0].getType()),
-                        getAppComponent(params[1].getType()));
-            case 3:
-                logger.debug("param0: " + getAppComponent(params[0].getType()));
-                logger.debug("param1: " + getAppComponent(params[1].getType()));
-                logger.debug("param2: " + getAppComponent(params[2].getType()));
-                return generator.invoke(configClassInstance,
-                        getAppComponent(params[0].getType()),
-                        getAppComponent(params[1].getType()),
-                        getAppComponent(params[2].getType()));
-            case 4:
-                logger.debug("param0: " + getAppComponent(params[0].getType()));
-                logger.debug("param1: " + getAppComponent(params[1].getType()));
-                logger.debug("param2: " + getAppComponent(params[2].getType()));
-                logger.debug("param3: " + getAppComponent(params[3].getType()));
-                return generator.invoke(configClassInstance,
-                        getAppComponent(params[0].getType()),
-                        getAppComponent(params[1].getType()),
-                        getAppComponent(params[2].getType()),
-                        getAppComponent(params[3].getType()));
-            case 5:
-                logger.debug("param0: " + getAppComponent(params[0].getType()));
-                logger.debug("param1: " + getAppComponent(params[1].getType()));
-                logger.debug("param2: " + getAppComponent(params[2].getType()));
-                logger.debug("param3: " + getAppComponent(params[3].getType()));
-                logger.debug("param4: " + getAppComponent(params[4].getType()));
-                return generator.invoke(configClassInstance,
-                        getAppComponent(params[0].getType()),
-                        getAppComponent(params[1].getType()),
-                        getAppComponent(params[2].getType()),
-                        getAppComponent(params[3].getType()),
-                        getAppComponent(params[4].getType()));
-            default:
-                throw new UnsupportedOperationException("Method " + generator.getName() + " has too many parameters: " + params.length);
+        return generator.invoke(
+                configClassInstance,
+                Arrays.stream(params)
+                        .map(Parameter::getType)
+                        .map(this::getAppComponent)
+                        .toArray());
+    }
+
+    private Object createConfigClassInstance(Class<?> configClass) {
+        try {
+            return configClass.getConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
         }
     }
 
