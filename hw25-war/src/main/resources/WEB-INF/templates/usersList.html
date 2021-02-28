@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>List of all users</title>
+
+    <script>
+        function getUser(url, valueControlName) {
+            const valueControl = document.getElementById(valueControlName);
+            const userDataContainer = document.getElementById('userDataContainer');
+            const fullUrl = url + (valueControl? (encodeURIComponent(valueControl.value)) : '');
+            fetch(fullUrl)
+                .then(response => {
+                    const contentType = response.headers.get("content-type");
+                    if (contentType && contentType.indexOf("application/json") !== -1) {
+                        return response.json();
+                    } else {
+                        return "User " + valueControl.value + " not found!";
+                    }
+                }).then(result => userDataContainer.innerText = JSON.stringify(result, null, 2));
+        }
+    </script>
+
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .users, .users td {
+            border: 1px solid lightgray;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+
+        a {
+            display: block;
+        }
+
+        input {
+            width: 150px;
+        }
+
+
+        select {
+            width: 154px;
+        }
+
+        button {
+            width: 250px;
+        }
+
+        .controls-container {
+            margin-bottom: 5px;
+        }
+
+        .single-button-container {
+            margin-left: 158px;
+        }
+
+        h3 {
+            background: url("../static/listmark.png") no-repeat;
+            padding: 2px;
+            padding-left: 30px;
+        }
+    </style>
+
+    <style th:inline="text">
+        h3 {
+            background: url([[@{/static/listmark.png}]]) no-repeat;
+            padding: 2px;
+            padding-left: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h3>Пользователи:</h3>
+
+    <table class="users">
+        <thead>
+            <tr>
+                <th>Login</th>
+                <th>Name</th>
+                <th>Password</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="user : ${users}">
+                <td th:text="${user.login}">johndoe</td>
+                <td th:text="${user.name}">John Doe</td>
+                <td th:text="${user.password}">John_Doe</td>
+                <td th:text="${user.role}">USER</td>
+            </tr>
+        </tbody>
+    </table>
+    <a th:href="@{/user/create}" href="userCreate.html">New user</a>
+
+    <br/><br/>
+    <h3>Тест View без контроллера:</h3>
+    <a th:href="@{/no-handler-view}">Перейти на View без контроллера</a>
+
+
+    <br/><br/>
+    <h3>API:</h3>
+
+
+    <a th:href="@{/api/user?login=johndoe}">
+        Запрос пользователя по логину johndoe
+    </a>
+    <a th:href="@{/api/user/random}">Запрос случайного пользователя</a>
+    <br/>
+    <br/>
+
+    <div class="controls-container">
+        <input type="text" id="userLoginTextBox" value="johndoe" placeholder="Введите login пользователя" >
+        <button onclick="getUser('api/user?login=', 'userLoginTextBox')">Получить пользователя по login</button>
+    </div>
+    <div class="controls-container">
+        <select id="usersNamesSelect">
+            <option value="johndoe" th:each="user : ${users}" th:value="${user.login}" th:text="${user.login}">johndoe</option>
+        </select>
+        <!--<select id="usersNamesSelect">
+            <option value="johndoe" selected>John Doe</option>
+            <option value="Ая Кэш">Ая Кэш</option>
+            <option value="Десмин Боргес">Десмин Боргес</option>
+            <option value="Кетер Донохью">Кетер Донохью</option>
+            <option value="Стивен Шнайдер">Стивен Шнайдер</option>
+            <option value="Джанет Вэрни">Джанет Вэрни</option>
+            <option value="Брэндон Смит">Брэндон Смит</option>
+        </select>-->
+        <button onclick="getUser('api/user?login=', 'usersNamesSelect')">Получить пользователя по имени</button>
+    </div>
+    <div class="controls-container single-button-container">
+        <button onclick="getUser('api/user/random')">Получить случайного клиента</button>
+    </div>
+
+    <pre id = "userDataContainer"></pre>
+
+</body>
+</html>

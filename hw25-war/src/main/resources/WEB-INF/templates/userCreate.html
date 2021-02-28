@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Create user</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<form id="create-form" th:action="@{/user/save}" th:object="${user}" th:method="post" accept-charset="utf-8">
+    <h1>New User:</h1>
+
+    <div class="row">
+        <label for="user-login">Login:</label>
+        <input id="user-login" name="login" type="text" th:value="${user.login}" value="johndoe"/> <br>
+        <label for="user-name">Name:</label>
+        <input id="user-name" name="name" type="text" th:value="${user.name}" value="John Doe"/> <br>
+        <label for="user-password">Password:</label>
+        <input id="user-password" name="password" type="password" th:value="${user.password}" value="johndoe"/> <br>
+        <label for="user-role">Role:</label>
+        <select id="user-role" th:field="${user.role}">
+            <option value="ADMIN" th:value="ADMIN">Администратор</option>
+            <option value="USER" th:value="USER">Пользователь</option>
+        </select>
+<!--        <input id="user-role" name="role" type="text" th:value="${user.role}" value="ADMIN"/>-->
+    </div>
+
+    <div class="row">
+        <button type="submit">Save</button>
+    </div>
+</form>
+
+</body>
+</html>

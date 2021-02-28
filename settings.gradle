@@ -1,1 +1,4 @@
 rootProject.name = 'otusJava'
+
+include 'hw23-webserver'
+include 'hw25-war'
