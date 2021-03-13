@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>List of all users</title>
+
+    <link rel="icon" href="/favicon.svg">
+
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/main.css" rel="stylesheet">
+
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="/app.js"></script>
+</head>
+<body onload="updateUserTable()">
+    <h3>Пользователи:</h3>
+
+    <pre id="systemMessageContainer"></pre>
+    <table class="users" border="1">
+        <thead>
+            <tr bgcolor="#dddddd">
+                <th>Login</th>
+                <th>Name</th>
+                <th>Password</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody id="userTable">
+            <!--<tr th:each="user : ${users}">
+                <td th:text="${user.login}">johndoe</td>
+                <td th:text="${user.name}">John Doe</td>
+                <td th:text="${user.password}">John_Doe</td>
+                <td th:text="${user.role}">USER</td>
+            </tr>-->
+        </tbody>
+    </table>
+    <a th:href="@{/user/save}" href="userSave.html">New user</a>
+
+    <hr>
+
+    <button onClick="getUserByLogin('johndoe', 'userDataContainer')">
+        Запрос пользователя по логину johndoe
+    </button>
+
+    <br>
+    <br>
+
+    <button onClick="getRandomUser('userDataContainer')">Запрос случайного пользователя</button>
+
+    <br>
+    <br>
+
+    <div class="controls-container">
+        <input type="text" id="userLoginTextBox" value="johndoe" placeholder="Введите login пользователя" >
+        <button onclick="getUserByUserLoginTextBox('userLoginTextBox', 'userDataContainer')">Получить пользователя по login</button>
+    </div>
+
+    <br>
+    <br>
+
+    <pre id="userDataContainer"></pre>
+    <pre id="errorContainer" class="error"></pre>
+
+</body>
+</html>
