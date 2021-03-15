@@ -4,10 +4,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "my_users")
-public class User {
+public class User implements Serializable {
 
     @Id
     @Column(name = "login")
@@ -30,6 +31,13 @@ public class User {
         this.name = name;
         this.password = password;
         this.role = role;
+    }
+
+    public User(String userLogin) {
+        this.login = userLogin;
+        this.name = null;
+        this.password = null;
+        this.role = null;
     }
 
     // Getters

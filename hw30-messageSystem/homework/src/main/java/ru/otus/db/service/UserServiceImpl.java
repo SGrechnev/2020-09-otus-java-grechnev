@@ -1,11 +1,14 @@
-package ru.otus.service;
+package ru.otus.db.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.otus.db.repository.UserRepository;
 import ru.otus.model.User;
-import ru.otus.repository.UserRepository;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class UserServiceImpl implements UserService {

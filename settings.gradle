@@ -1,3 +1,4 @@
 rootProject.name = 'otusJava'
 
+include 'hw30-messageSystem:MessageSystem'
 include 'hw30-messageSystem:homework'

@@ -6,11 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import ru.otus.front.FrontendService;
 import ru.otus.model.User;
-import ru.otus.service.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,55 +23,58 @@ public class UserWsController {
     private final List<String> ids = new ArrayList<>();
 
     @Autowired
-    private final UserService userService;
+    private final FrontendService frontendService;
 
-    public UserWsController(SimpMessagingTemplate template, UserService userService) {
+    public UserWsController(SimpMessagingTemplate template, FrontendService frontendService) {
         this.template = template;
-        this.userService = userService;
+        this.frontendService = frontendService;
     }
 
     @MessageMapping("/getUsers.{id}")
-    @SendTo("/topic/users.{id}")
-    public List<User> getUsers(@DestinationVariable String id) {
+    public void getUsers(@DestinationVariable String id) {
         logger.info("get all users");
-        logger.info("not so fast...");
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         ids.add(id);
-        return userService.getAll();
+        frontendService.getAll(userList -> {
+            logger.debug("{} users received", userList.get().size());
+            template.convertAndSend("/topic/users." + id, userList.toUserList());
+        });
     }
 
     @MessageMapping("/saveUser.{id}")
-    @SendTo("/topic/savedUser.{id}")
-    public User createUser(User user) {
+    public void createUser(User user, @DestinationVariable String id) {
         logger.info("save user {}", user);
-        userService.save(user);
-        logger.info("user {} saved", user);
-        ids.forEach(id_ -> template.convertAndSend("/topic/users." + id_, user));
-        return user;
+        frontendService.save(user, (u) -> {
+            logger.debug("user saved {}", u.get());
+            template.convertAndSend("/topic/savedUser." + id, u.get());
+            ids.forEach(id_ -> template.convertAndSend("/topic/users." + id_, u.get()));
+        });
     }
 
     @MessageMapping("/getUser.{id}")
-    @SendTo("/topic/getUser.{id}")
-    public Optional<User> getUser(String login) {
-        var optionalUser = userService.get(login);
-        logger.info("get user by login: {}", optionalUser.orElse(null));
-        return optionalUser;
+    public void getUser(String login, @DestinationVariable String id) {
+        frontendService.get(login, userData -> {
+            template.convertAndSend("/topic/getUser." + id, Optional.ofNullable(userData.get()));
+        });
     }
 
     @MessageMapping("/getRandomUser.{id}")
-    @SendTo("/topic/getUser.{id}")
-    public Optional<User> getRandomUser() {
-        var optionalUser = userService.getRandom();
-        logger.info("get random user: {}", optionalUser.orElse(null));
-        return optionalUser;
+    public void getRandomUser(@DestinationVariable String id) {
+        frontendService.getRandom(userData -> {
+            template.convertAndSend("/topic/getUser." + id, Optional.ofNullable(userData.get()));
+        });
     }
 
     @MessageExceptionHandler()
     private String handleMessageException(Exception e) {
         return "Oops! Something went wrong. Error: " + e.getClass().getSimpleName();
+    }
+
+    private void sleep(long millis) {
+        logger.info("sleep {} ms...", millis);
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

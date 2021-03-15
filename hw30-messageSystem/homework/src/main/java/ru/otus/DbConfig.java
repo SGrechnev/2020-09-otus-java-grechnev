@@ -2,7 +2,6 @@ package ru.otus;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import ru.otus.model.User;
 
 import java.util.Map;
