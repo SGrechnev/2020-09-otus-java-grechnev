@@ -1,0 +1,61 @@
+a {
+    display: block;
+}
+
+body {
+    padding: 50px;
+}
+
+button.save {
+    width: 254px;
+}
+
+container {
+    margin-left: 30px;
+}
+
+error {
+    font-color: red;
+    font-style: bold;
+}
+
+h3 {
+    background: url("/listmark.png") no-repeat;
+    padding: 2px;
+    padding-left: 30px;
+}
+
+input {
+    width: 150px;
+}
+
+input:read-only {
+    background: lightgray;
+}
+
+label {
+    display: inline-block;
+    width: 100px;
+}
+
+select {
+    width: 150px;
+}
+
+.controls-container {
+    margin-bottom: 5px;
+}
+
+.single-button-container {
+    margin-left: 0px;
+}
+
+.users, .users td {
+    border: 1px solid lightgray;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+.row {
+    margin-top: 10px;
+}

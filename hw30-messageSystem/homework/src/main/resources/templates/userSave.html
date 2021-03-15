@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Save user</title>
+
+    <link rel="icon" href="/favicon.svg">
+
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/main.css" rel="stylesheet">
+
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="/app.js"></script>
+</head>
+<body>
+    <h3>Save (create or edit) user:</h3>
+    <div id="main-content" class="container">
+        <div class="row">
+            <div class="form-group">
+                <label for="user-login">Login:</label>
+                <input id="user-login" name="login" type="text" value="johndoe"/> <br>
+                <label for="user-name">Name:</label>
+                <input id="user-name" name="name" type="text" value="John Doe"/> <br>
+                <label for="user-password">Password:</label>
+                <input id="user-password" name="password" type="password" value="johndoe"/> <br>
+                <label for="user-role">Role:</label>
+                <select id="user-role">
+                    <option value="ADMIN">Администратор</option>
+                    <option value="USER">Пользователь</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <button id="save" onclick="submitUser()">Save</button>
+        </div>
+
+        <pre id="savedUserContainer"></pre>
+    </div>
+</body>
+</html>
