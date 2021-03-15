@@ -68,13 +68,4 @@ public class UserWsController {
     private String handleMessageException(Exception e) {
         return "Oops! Something went wrong. Error: " + e.getClass().getSimpleName();
     }
-
-    private void sleep(long millis) {
-        logger.info("sleep {} ms...", millis);
-        try {
-            Thread.sleep(millis);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
 }
