@@ -2,6 +2,7 @@ package ru.otus.model;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -37,7 +38,7 @@ public class Task {
     private int progress;
 
     @OneToMany(mappedBy = "task", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Report> reports;
+    private List<Report> reports = new ArrayList<>();
 
     public Task() {
     }
@@ -127,7 +128,7 @@ public class Task {
         private LocalDate expectedDueDate;
         private LocalDate actualDueDate;
         private int progress;
-        private List<Report> reports;
+        private List<Report> reports = new ArrayList<>();
 
         public Builder id(Long id) {
             this.id = id;

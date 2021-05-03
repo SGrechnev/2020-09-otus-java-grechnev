@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 public class TaskRestController {
 
-    private final static Logger logger = LoggerFactory.getLogger(ReportRestController.class);
+    private final static Logger logger = LoggerFactory.getLogger(TaskRestController.class);
 
     private final TaskService taskService;
 

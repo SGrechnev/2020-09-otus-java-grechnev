@@ -66,28 +66,27 @@ function success(taskId, response) {
 
 function addTask(creatorId) {
   console.log("creatorId: ", creatorId)
-  const performerId = document.getElementById('add-task_performer').value;
-  const description = document.getElementById('add-task_description').value;
-  const expectedResult = document.getElementById('add-task_expected_result').value;
-  const expectedDueDate = document.getElementById('add-task_expected_due_date').value;
+  const performerId = document.getElementById('add-task_performer');
+  const description = document.getElementById('add-task_description');
+  const expectedResult = document.getElementById('add-task_expected_result');
+  const expectedDueDate = document.getElementById('add-task_expected_due_date');
 
   const errorContainer = document.getElementById('apiErrorMessage');
 
-  postData('/api/tasks/', {performerId: performerId, description: description, expectedResult: expectedResult, expectedDueDate: expectedDueDate})
+  postData('/api/tasks/', {performerId: performerId.value, description: description.value, expectedResult: expectedResult.value, expectedDueDate: expectedDueDate.value})
     .then(
       response => {
-        console.log(response);
+        console.log("addTask::response:", response);
         let div = document.createElement('div');
         div.className = "card card-body";
         div.innerText = JSON.stringify(response);
         errorContainer.append(div);
-        progressInput.value = "";
-        commentInput.value = "";
-      },
-      error => {
-        errorContainer.innerText = JSON.stringify(error);
+        performerId.value = '';
+        description.value = '';
+        expectedResult.value = '';
+        expectedDueDate.value = '';
       }
-    );
+    ).catch(error => fail(error));
 }
 
 async function postData(url = '', data = {}) {
