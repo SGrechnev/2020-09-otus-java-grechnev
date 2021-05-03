@@ -1,0 +1,59 @@
+body {
+    margin: 20px;
+    padding-left:50px;
+}
+
+#avatar {
+    width: 48px;
+    border-radius: 50%;
+}
+
+.user-pic {
+    background: url(frame.svg);
+    width:52px;
+    height:52px;
+    padding: 2px 2px;
+    background-size: contain;
+}
+
+.text {
+    overflow-wrap: break-word;
+}
+
+.me-auto {
+    margin-right: auto!important;
+}
+
+.ms-auto {
+    margin-left: auto!important;
+}
+
+.tasks {
+    margin: 50px min(250px,10%);
+    min-width: 700px;
+}
+
+.task {
+    padding: 0px 10px;
+    background-color: #ffefb0;
+    margin: 50px;
+}
+
+.task_field {
+    padding: 5px;
+    padding-bottom: 15px;
+}
+
+.task_title {
+    font-weight: bold;
+}
+
+.task_creator_and_performer {
+    align-self: flex-end;
+    width: 300px;
+}
+
+.progress {
+    width: 200px;
+    background-color: #f8f8e8;
+}

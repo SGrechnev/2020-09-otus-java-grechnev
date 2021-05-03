@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>TMS: all tasks</title>
+
+    <link rel="icon" href="/favicon.svg">
+
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/main.css" rel="stylesheet">
+
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/app.js"></script>
+</head>
+
+<body>
+
+<div class="d-flex mb-3">
+    <div class="me-auto p-2">
+        <h2>Задачи</h2>
+    </div>
+    <div id="d-flex userInfo">
+        <div class="align-top user-pic">
+            <img id="avatar" src="/person-fill.svg">
+        </div>
+        <div class="text" th:utext="${me.fullname}">Fullname</div>
+    </div>
+    <div id="logout">
+        <a href="/logout">
+            <img src="/box-arrow-right.svg" title="Выйти">
+        </a>
+    </div>
+</div>
+
+<div th:if="${me.getRole() == ROLE_MANAGER}" id="add-task" class="p-3">
+    <div class="mb-3">
+        <label for="add-task_performer" class="col-form-label">Исполнитель</label>
+        <input list="add-task_performers" name="add-task_performer" id="add-task_performer">
+        <datalist id="add-task_performers" class="form-control col-sm-10">
+            <option th:each="performer: ${allPerformers}" th:value="${performer.getId()}" th:text="${performer.getFullname()}">
+        </datalist>
+    </div>
+    <div class="mb-3">
+        <label for="add-task_description">Описание</label>
+        <textarea class="form-control" id="add-task_description" rows="3"></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="add-task_expected_result">Ожидаемый результат</label>
+        <textarea class="form-control" id="add-task_expected_result" rows="3"></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="add-task_expected_due_date">Ожидаемая дата исполнения</label>
+        <input type="date" class="form-control" id="add-task_expected_due_date">
+    </div>
+    <button th:onclick="|addTask(${me.getId()});|" type="button" class="btn btn-success">Добавить задачу</button>
+</div>
+
+<div class="tasks">
+    <div th:each="task: ${tasks}" class="task card card-body">
+        <div id="task_creator" th:id="'task_creator_' + ${task.getId()}" class="task_creator_and_performer">
+            <span id="task_creator_title" class="task_title">Создатель</span>
+            <span id="task_creator_content" class="task_content" th:utext="${task.creator.fullname}">ФИО создателя таска</span>
+        </div>
+        <div id="task_performer" th:id="'task_performer_' + ${task.getId()}" class="task_creator_and_performer">
+            <span id="task_performer_title" class="task_title">Исполнитель</span>
+            <span id="task_performer_content" class="task_content" th:utext="${task.performer.fullname}">Гречнев С.Ю.</span>
+        </div>
+        <div id="task_description" th:id="'task_description_' + ${task.getId()}" class="task_field">
+            <div id="task_description_title" class="task_title">Задача</div>
+            <div id="task_description_content" class="task_content" th:utext="${task.description}">Прочитать 1000 книг.</div>
+        </div>
+        <div id="task_result" th:id="'task_result_' + ${task.getId()}" class="task_field">
+            <div id="task_result_title" class="task_title">Ожидаемый результат</div>
+            <div id="task_result_content" class="task_content" th:utext="${task.expectedResult}">Прочтено 1000 книг к установленной дате.</div>
+        </div>
+        <div id="task_exp_due_date" th:id="'task_exp_due_date_' + ${task.getId()}" class="task_field">
+            <div id="task_exp_due_date_title" class="task_title">Ожидаемая дата выполнения</div>
+            <div id="task_exp_due_date_content" class="task_content" th:utext="${task.expectedDueDate}">31-02-2021</div>
+        </div>
+        <div id="task_progress" th:id="'task_task_progress_' + ${task.getId()}" class="task_field">
+            <span id="task_progress_title" class="task_title">Прогресс: </span>
+            <span th:id="'task_progress_value_' + ${task.getId()}" class="task_content" th:utext="${task.progress} + '%'">10%</span>
+            <div class="progress">
+                <span th:id="'task_progress_bar_' + ${task.getId()}" class="progress-bar" th:classappend="${task.progress==100} ? bg-success : bg-warning" role="progressbar" style="width: 50%;" th:style="'width: ' + ${task.progress} + '%;'"></span>
+            </div>
+        </div>
+        <div id="task_act_due_date" th:id="'task_act_due_date_' + ${task.getId()}" class="task_field">
+            <div id="task_act_due_date_title" class="task_title">Выполнено</div>
+            <div id="task_act_due_date_content" class="task_content" th:utext="${task.getActualDueDate() != null} ? ${task.getActualDueDate()} : 'не выполнено'">не выполнено</div>
+        </div>
+        <div id="task_reports" th:id="'task_reports_' + ${task.getId()}" class="task_field">
+            <button
+                    class="btn btn-warning"
+                    type="button"
+                    data-toggle="collapse"
+                    aria-expanded="false"
+                    th:attr="data-target='#task_reports_content_'+${task.getId()}"
+                    th:attrappend="aria-controls='task_reports_content_'+${task.getId()}">
+                Отчеты
+            </button>
+
+            <div id="task_reports_content" th:id="'task_reports_content_' + ${task.getId()}" class="collapse gap-3">
+
+                <div th:each="report: ${task.reports}" th:id="'task_reports_content_' + ${task.getId()} + '_' + ${report.getId()}" class="card card-body" th:utext="${report}">
+                    Отчет 1
+                </div>
+
+                <br>
+
+                <div th:if="${task.getPerformer().getId() == me.getId()}" id="add-report" class="p-3">
+                    <div class="mb-3">
+                        <label th:for="'add-report_progress_' + ${task.getId()}" class="col-form-label">Прогресс</label>
+                        <input type="number" th:id="'add-report_progress_' + ${task.getId()}" class="form-control col-sm-10"  min="0" max="100">
+                    </div>
+                    <div class="mb-3">
+                        <label th:for="'add-report_comment_' + ${task.getId()}">Комментарий</label>
+                        <textarea class="form-control" th:id="'add-report_comment_' + ${task.getId()}" rows="3"></textarea>
+                    </div>
+                    <button th:onclick="|addReport(${task.getId()})|" type="button" class="btn btn-success">Добавить отчёт</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<pre id="apiErrorMessage"></pre>
+
+</body>
+</html>

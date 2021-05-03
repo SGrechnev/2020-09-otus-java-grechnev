@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>TMS: all users</title>
+
+    <link rel="icon" href="/favicon.svg">
+
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/main.css" rel="stylesheet">
+
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/app.js"></script>
+    <script src="/admin/admin-app.js"></script>
+</head>
+
+<body>
+
+<div class="d-flex mb-3">
+    <div class="me-auto p-2">
+        <h2>Пользователи</h2>
+    </div>
+    <div id="d-flex userInfo">
+        <div class="align-top user-pic">
+            <img id="avatar" src="/person-fill.svg">
+        </div>
+        <div class="text" th:utext="${me.fullname}">Fullname</div>
+    </div>
+    <div id="logout">
+        <a href="/logout">
+            <img src="/box-arrow-right.svg" title="Выйти">
+        </a>
+    </div>
+</div>
+
+<pre id="systemMessageContainer"></pre>
+<table class="users" border="1">
+    <thead>
+    <tr bgcolor="#dddddd">
+        <th>Id</th>
+        <th>Username</th>
+        <th>Fullname</th>
+        <th>Role</th>
+    </tr>
+    </thead>
+    <tbody id="userTable">
+        <tr th:each="user : ${users}">
+            <td th:text="${user.id}">123</td>
+            <td th:text="${user.username}">johndoe</td>
+            <td th:text="${user.fullname}">John Doe</td>
+            <td th:text="${user.role}">USER</td>
+        </tr>
+    </tbody>
+</table>
+
+<br>
+
+
+<div id="add-user" class="p-3">
+    <div class="mb-3">
+        <label for="add-user_username" class="col-form-label">username</label>
+        <input name="add-user_username" id="add-user_username">
+    </div>
+    <div class="mb-3">
+        <label for="add-user_fullname">fullname</label>
+        <input id="add-user_fullname">
+    </div>
+    <div class="mb-3">
+        <label for="add-user_role">Role</label>
+        <select class="form-control" id="add-user_role">
+            <option value="ROLE_PERFORMER">Исполнитель</option>
+            <option value="ROLE_MANAGER">Руководитель</option>
+            <option value="ROLE_ADMIN">Администратор</option>
+        </select>
+    </div>
+    <button th:onclick="|addUser();|" type="button" class="btn btn-success">Добавить пользователя</button>
+</div>
+
+</body>
+</html>
