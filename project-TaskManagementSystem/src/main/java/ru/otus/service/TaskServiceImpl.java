@@ -2,9 +2,9 @@ package ru.otus.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.otus.dto.TaskDto;
+import ru.otus.model.Report;
 import ru.otus.model.Role;
 import ru.otus.model.Task;
 import ru.otus.repository.TaskRepository;
@@ -18,16 +18,19 @@ import java.util.Optional;
 @Service
 public class TaskServiceImpl implements TaskService {
 
-    private final static Logger logger = LoggerFactory.getLogger(TaskServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(TaskServiceImpl.class);
 
-    @Autowired
-    private TaskRepository taskRepository;
+    private final TaskRepository taskRepository;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private AuthenticatedUserInfoService authenticatedUserInfoService;
+    private final AuthenticatedUserInfoService authenticatedUserInfoService;
+
+    public TaskServiceImpl(TaskRepository taskRepository, UserService userService, AuthenticatedUserInfoService authenticatedUserInfoService) {
+        this.taskRepository = taskRepository;
+        this.userService = userService;
+        this.authenticatedUserInfoService = authenticatedUserInfoService;
+    }
 
     public Task save(Task task) {
         return taskRepository.save(task);
@@ -92,7 +95,7 @@ public class TaskServiceImpl implements TaskService {
         }
         var task = oTask.get();
         task.setProgress(progress);
-        if(progress == 100) {
+        if (progress == Report.PROGRESS_MAX_VALUE) {
             task.setActualDueDate(LocalDate.now());
         }
         taskRepository.save(task);

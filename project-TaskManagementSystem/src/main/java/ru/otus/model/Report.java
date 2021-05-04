@@ -7,6 +7,8 @@ import java.time.LocalDate;
 @Table(name = "reports")
 public class Report {
 
+    public static final int PROGRESS_MIN_VALUE = 0, PROGRESS_MAX_VALUE = 100;
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id")

@@ -1,6 +1,5 @@
 package ru.otus.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.otus.dto.ReportDto;
 import ru.otus.model.Report;
@@ -14,11 +13,14 @@ import java.util.Optional;
 @Service
 public class ReportServiceImpl implements ReportService {
 
-    @Autowired
-    private ReportRepository reportRepository;
+    private final ReportRepository reportRepository;
 
-    @Autowired
-    private TaskRepository taskRepository;
+    private final TaskRepository taskRepository;
+
+    public ReportServiceImpl(ReportRepository reportRepository, TaskRepository taskRepository) {
+        this.reportRepository = reportRepository;
+        this.taskRepository = taskRepository;
+    }
 
     public Report save(Report report) {
         return reportRepository.save(report);
@@ -26,12 +28,14 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public Report save(ReportDto reportDto) throws IllegalArgumentException {
-        if (reportDto.getProgress() < 0 || reportDto.getProgress() > 100) {
-            throw new IllegalArgumentException(String.format("Adding report with progress %d, expected 0..100", reportDto.getProgress()));
+        if (reportDto.getProgress() < Report.PROGRESS_MIN_VALUE || reportDto.getProgress() > Report.PROGRESS_MAX_VALUE) {
+            throw new IllegalArgumentException(String.format("Adding report with progress %d, expected %d..%d",
+                    reportDto.getProgress(), Report.PROGRESS_MIN_VALUE, Report.PROGRESS_MAX_VALUE));
         }
         var task = taskRepository.findById(reportDto.getTaskId());
         if (task.isEmpty()) {
-            throw new IllegalArgumentException(String.format("Adding report for non-existing task with id %d", reportDto.getTaskId()));
+            throw new IllegalArgumentException(String.format("Adding report for non-existing task with id %d",
+                    reportDto.getTaskId()));
         }
         return reportRepository.save(
                 new Report(task.get(), reportDto.getProgress(), reportDto.getComment(), LocalDate.now())

@@ -1,6 +1,5 @@
 package ru.otus.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,14 +15,17 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 public class WebController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private TaskService taskService;
+    private final TaskService taskService;
 
-    @Autowired
-    private AuthenticatedUserInfoService authenticatedUserInfoService;
+    private final AuthenticatedUserInfoService authenticatedUserInfoService;
+
+    public WebController(UserService userService, TaskService taskService, AuthenticatedUserInfoService authenticatedUserInfoService) {
+        this.userService = userService;
+        this.taskService = taskService;
+        this.authenticatedUserInfoService = authenticatedUserInfoService;
+    }
 
     @GetMapping({"/", "/tasks"})
     public String tasksView(Model model, final HttpServletResponse response) {

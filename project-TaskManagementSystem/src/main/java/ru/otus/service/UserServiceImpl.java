@@ -1,6 +1,7 @@
 package ru.otus.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.otus.model.Role;
 import ru.otus.model.User;
@@ -12,10 +13,19 @@ import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
+
+    private final UserRepository userRepository;
+
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public User save(User user) {
+        if (!valid(user)) {
+            logger.info("Invalid user: {}", user);
+            return null;
+        }
         return userRepository.save(user);
     }
 
@@ -34,5 +44,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getByRole(Role role) {
         return userRepository.findByRole(role);
+    }
+
+    private static boolean valid(User user) {
+        return user != null &&
+                user.getFullname() != null &&
+                !user.getFullname().equals("") &&
+                user.getUsername() != null &&
+                !user.getUsername().equals("");
     }
 }
