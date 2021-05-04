@@ -62,7 +62,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .userDnPatterns(ldapUserDnPattern)
                 .passwordCompare()
-//                .passwordEncoder(new BCryptPasswordEncoder())
                 .passwordAttribute("userPassword")
                 .and()
                 .userDetailsContextMapper(customUserDetailsContextMapper);
