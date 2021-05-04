@@ -15,11 +15,11 @@ public class ReportServiceImpl implements ReportService {
 
     private final ReportRepository reportRepository;
 
-    private final TaskRepository taskRepository;
+    private final TaskService taskService;
 
-    public ReportServiceImpl(ReportRepository reportRepository, TaskRepository taskRepository) {
+    public ReportServiceImpl(ReportRepository reportRepository, TaskService taskService) {
         this.reportRepository = reportRepository;
-        this.taskRepository = taskRepository;
+        this.taskService = taskService;
     }
 
     public Report save(Report report) {
@@ -32,7 +32,7 @@ public class ReportServiceImpl implements ReportService {
             throw new IllegalArgumentException(String.format("Adding report with progress %d, expected %d..%d",
                     reportDto.getProgress(), Report.PROGRESS_MIN_VALUE, Report.PROGRESS_MAX_VALUE));
         }
-        var task = taskRepository.findById(reportDto.getTaskId());
+        var task = taskService.get(reportDto.getTaskId());
         if (task.isEmpty()) {
             throw new IllegalArgumentException(String.format("Adding report for non-existing task with id %d",
                     reportDto.getTaskId()));

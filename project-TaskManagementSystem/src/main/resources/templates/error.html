@@ -19,8 +19,8 @@
             <div class="row justify-content-center">
                 <div class="col-md-12 text-center">
                     <span class="display-1 d-block">Oops!</span>
-                    <div class="mb-4 lead">Something went wrong. Error:</div>
-                    <div class="mb-4 lead text-danger" th:text="${message}"></div>
+                    <div class="mb-4 lead">Something went wrong.</div>
+                    <div class="mb-4 lead text-danger" th:text="'Error: ' + ${message}"></div>
                     <a href="/" class="btn btn-link">Back to Home</a>
                 </div>
             </div>
