@@ -53,6 +53,10 @@ public class Report {
         return comment;
     }
 
+    public LocalDate getCreationDate() {
+        return creationDate;
+    }
+
     @Override
     public String toString() {
         return "Report{" +

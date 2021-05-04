@@ -17,8 +17,9 @@
 <body>
 
 <div class="d-flex mb-3">
-    <div class="me-auto p-2">
-        <h2>Задачи</h2>
+    <div class="d-flex me-auto p-2">
+        <img src="/favicon.svg" height="42px">
+        <h1>Задачи</h1>
     </div>
     <div id="d-flex userInfo">
         <div class="align-top user-pic">
@@ -33,24 +34,28 @@
     </div>
 </div>
 
-<div th:if="${me.getRole() == ROLE_MANAGER}" id="add-task" class="p-3">
-    <div class="mb-3">
-        <label for="add-task_performer" class="col-form-label">Исполнитель</label>
-        <select id="add-task_performer" class="form-control col-sm-10">
-            <option th:each="performer: ${allPerformers}" th:value="${performer.getId()}" th:text="${performer.getFullname()}">
-        </select>
+<div th:if="${me.getRole() == ROLE_MANAGER}" id="add-task" class="tasks">
+    <div class="d-flex w-100">
+        <div class="mb-3 w-50">
+            <label for="add-task_performer" class="col-form-label">Исполнитель</label>
+            <select id="add-task_performer" class="form-control">
+                <option th:each="performer: ${allPerformers}" th:value="${performer.getId()}" th:text="${performer.getFullname()}">
+            </select>
+        </div>
+        <div class="mb-3 ml-4 w-50">
+            <label for="add-task_expected_due_date" class="col-form-label">Ожидаемая дата исполнения</label>
+            <input type="date" class="form-control" id="add-task_expected_due_date">
+        </div>
     </div>
-    <div class="mb-3">
-        <label for="add-task_description">Описание</label>
-        <textarea class="form-control" id="add-task_description" rows="3"></textarea>
-    </div>
-    <div class="mb-3">
-        <label for="add-task_expected_result">Ожидаемый результат</label>
-        <textarea class="form-control" id="add-task_expected_result" rows="3"></textarea>
-    </div>
-    <div class="mb-3">
-        <label for="add-task_expected_due_date">Ожидаемая дата исполнения</label>
-        <input type="date" class="form-control" id="add-task_expected_due_date">
+    <div class="d-flex w-100">
+        <div class="mb-3 w-50">
+            <label for="add-task_description" class="col-form-label">Описание</label>
+            <textarea class="form-control" id="add-task_description" rows="7"></textarea>
+        </div>
+        <div class="mb-3 ml-4 w-50">
+            <label for="add-task_expected_result" class="col-form-label">Ожидаемый результат</label>
+            <textarea class="form-control" id="add-task_expected_result" rows="7"></textarea>
+        </div>
     </div>
     <button th:onclick="|addTask(${me.getId()});|" type="button" class="btn btn-success">Добавить задачу</button>
 </div>
@@ -101,8 +106,10 @@
 
             <div id="task_reports_content" th:id="'task_reports_content_' + ${task.getId()}" class="collapse gap-3">
 
-                <div th:each="report: ${task.reports}" th:id="'task_reports_content_' + ${task.getId()} + '_' + ${report.getId()}" class="card card-body" th:text="${report}">
-                    Отчет 1
+                <div th:each="report: ${task.reports}" th:id="'task_reports_content_' + ${task.getId()} + '_' + ${report.getId()}" class="card card-body mt-2">
+                    <small class="text-muted" th:text="${report.getCreationDate()}">creationDate</small>
+                    <div th:text="${report.getProgress()} + '%'">progress</div>
+                    <div th:text="${report.getComment()}">comment</div>
                 </div>
 
                 <br>

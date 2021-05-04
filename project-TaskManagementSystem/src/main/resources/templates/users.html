@@ -18,8 +18,9 @@
 <body>
 
 <div class="d-flex mb-3">
-    <div class="me-auto p-2">
-        <h2>Пользователи</h2>
+    <div class="d-flex me-auto p-2">
+        <img src="/favicon.svg" height="42px">
+        <h1>Пользователи</h1>
     </div>
     <div id="d-flex userInfo">
         <div class="align-top user-pic">
@@ -59,22 +60,22 @@
 
 <div id="add-user" class="p-3">
     <div class="mb-3">
-        <label for="add-user_username" class="col-form-label">username</label>
-        <input name="add-user_username" id="add-user_username">
+        <label for="add-user_username" class="col-form-label" style="width:75px">Username</label>
+        <input name="add-user_username" id="add-user_username" style="width:200px">
     </div>
     <div class="mb-3">
-        <label for="add-user_fullname">fullname</label>
-        <input id="add-user_fullname">
+        <label for="add-user_fullname" style="width:75px">Fullname</label>
+        <input id="add-user_fullname" style="width:200px">
     </div>
-    <div class="mb-3">
-        <label for="add-user_role">Role</label>
-        <select class="form-control" id="add-user_role">
+    <div class="d-flex mb-3">
+        <label for="add-user_role" style="width:78px">Role</label>
+        <select class="form-control" id="add-user_role" style="width:200px">
             <option value="ROLE_PERFORMER">Исполнитель</option>
             <option value="ROLE_MANAGER">Руководитель</option>
             <option value="ROLE_ADMIN">Администратор</option>
         </select>
     </div>
-    <button th:onclick="|addUser();|" type="button" class="btn btn-success">Добавить пользователя</button>
+    <button th:onclick="|addUser();|" type="button" class="btn btn-success" style="width:278px">Добавить пользователя</button>
 </div>
 
 </body>
