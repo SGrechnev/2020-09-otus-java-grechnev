@@ -1,16 +1,13 @@
-drop sequence if exists hibernate_sequence;
 create sequence hibernate_sequence start with 1 increment by 1;
 
-DROP TABLE IF EXISTS users;
-CREATE TABLE users(
+create table users(
     id          bigserial,
     username    varchar(50) not null,
     fullname    varchar(50),
     role        varchar(50)
 );
 
-DROP TABLE IF EXISTS tasks;
-CREATE TABLE tasks(
+create table tasks(
     id                  bigserial,
     performer_id        bigint not null,
     creator_id          bigint not null,
@@ -21,8 +18,7 @@ CREATE TABLE tasks(
     progress            smallint
 );
 
-DROP TABLE IF EXISTS reports;
-CREATE TABLE reports(
+create table reports(
     id              bigint not null primary key,
     task_id         bigint not null,
     progress        smallint not null,

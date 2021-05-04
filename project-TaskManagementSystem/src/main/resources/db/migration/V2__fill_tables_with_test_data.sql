@@ -1,3 +1,6 @@
+----------------
+-- Fill users --
+----------------
 insert into users
     (id,                             username,     fullname,        role)
 values
@@ -8,8 +11,9 @@ values
     (nextval('hibernate_sequence'), 'performer2', 'Performer 2',   'ROLE_PERFORMER'),
     (nextval('hibernate_sequence'), 'performer3', 'Performer 3',   'ROLE_PERFORMER');
 
-
-
+----------------
+-- Fill tasks --
+----------------
 insert into tasks
     (id,                            creator_id,                                       performer_id,                                       description, expected_result, expected_due_date, progress, actual_due_date)
 values
@@ -35,8 +39,9 @@ insert into tasks
 values
     (nextval('hibernate_sequence'), (select id from users where username='manager2'), (select id from users where username='performer3'), 'm2 to p3',  'Result5',       '2021-04-24',      0,        '2021-04-21');
 
-
-
+------------------
+-- Fill reports --
+------------------
 insert into reports
     (id,                            task_id,                                              progress, comment,       creation_date)
 values

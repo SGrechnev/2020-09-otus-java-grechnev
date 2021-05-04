@@ -22,6 +22,7 @@ dependencies {
     implementation("org.springframework.security:spring-security-config")
 
     implementation("org.postgresql:postgresql")
+    implementation("org.flywaydb:flyway-core")
 
     implementation("org.webjars:webjars-locator-core")
     implementation("org.webjars:bootstrap:${Versions.bootstrap}")
