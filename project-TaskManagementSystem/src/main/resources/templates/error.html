@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>TMS: error</title>
+
+    <link rel="icon" href="/favicon.svg">
+
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/main.css" rel="stylesheet">
+
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="page-wrap d-flex flex-row align-items-center">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-12 text-center">
+                    <span class="display-1 d-block">Oops!</span>
+                    <div class="mb-4 lead">Something went wrong. Error:</div>
+                    <div class="mb-4 lead text-danger" th:text="${message}"></div>
+                    <a href="/" class="btn btn-link">Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

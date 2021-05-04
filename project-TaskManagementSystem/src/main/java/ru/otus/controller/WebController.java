@@ -66,8 +66,9 @@ public class WebController {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    private String handleMessageException(Exception e) {
+    public String handleMessageException(Exception e, Model model) {
         logger.error("Exception: {}", e.getMessage());
-        return "Oops! Something went wrong. Error: " + e.getClass().getSimpleName();
+        model.addAttribute("message", e.getClass().getSimpleName());
+        return "error.html";
     }
 }

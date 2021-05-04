@@ -1,4 +1,4 @@
-package ru.otus;
+package ru.otus.auth;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +28,9 @@ public class CustomUserDetailsContextMapper extends LdapUserDetailsMapper {
     @Override
     public UserDetails mapUserFromContext(DirContextOperations ctx, String username, Collection<? extends GrantedAuthority> authorities) {
         var user = userService.findByUsername(username);
+        if (user.isEmpty()) {
+            throw new UserNotFoundInLocalDbException("User \"" + username + "\" not found in local database");
+        }
         Collection<Role> localAuthorities = new ArrayList<>();
         user.ifPresent(value -> localAuthorities.add(value.getRole()));
         return super.mapUserFromContext(ctx, username, localAuthorities);
