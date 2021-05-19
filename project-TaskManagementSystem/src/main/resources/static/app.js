@@ -32,8 +32,13 @@ function addReport(taskId) {
 }
 
 function fail(response) {
-  const errorContainer = document.getElementById('apiErrorMessage');
-  errorContainer.innerText = response;
+  $('.toast-body>p').text(response);
+  showToast({
+    title: 'Ошибка',
+    content: response,
+    type: 'error',
+    delay: 3000
+  })
 }
 
 function success(taskId, response) {
@@ -64,10 +69,17 @@ function success(taskId, response) {
   // clear inputs
   $('#add-report_progress_' + taskId).val("");
   $('#add-report_comment_' + taskId).val("");
+
+  showToast({
+      title: 'Готово!',
+      content: 'Отчёт успешно добавлен',
+      type: 'success',
+      delay: 3000
+    })
 }
 
 function addTask(creatorId) {
-  console.log("creatorId: ", creatorId)
+  console.log("creatorId: ", creatorId);
 
   sendRequest(
     'POST',
@@ -103,4 +115,48 @@ async function sendRequest(method = 'GET', url = '', data = {}) {
     throw await response.text()
   }
   return await response.json();
+}
+
+function showToast(options) {
+  var color;
+  switch (options.type) {
+    case 'error':
+      color = '#dc3545'; break;
+    case 'warning':
+      color = '#ffc107'; break;
+    case 'success':
+      color = '#1e7e34'; break;
+    default:
+      color = '#0062cc'; break;
+  }
+
+  let toast = createElementFromHTML(
+      '<div class="toast fade hide" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000">' +
+        '<div class="toast-header">' +
+          '<svg class="bd-placeholder-img rounded mr-2" width="20" height="20" xmlns="http://www.w3.org/2000/svg" role="img" aria-label=" :  " preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="' + color + '"></rect></svg>' +
+          '<div class="flex-grow-1 mt-1 mb-1">' +
+            '<strong> Ошибка </strong>' +
+          '</div>' +
+          '<button type="button" data-dismiss="toast" aria-label="Close" class="ml-2 mb-1 close" style="position: fixed; right: 10px;">' +
+            '<span aria-hidden="true">×</span>' +
+          '</button>' +
+        '</div>' +
+        '<div class="toast-body">' +
+          '<p>Message</p>' +
+        '</div>' +
+      '</div>');
+  toast.setAttribute('data-delay', options.delay ?? 3000);
+  toast.querySelector('.toast-header>div>strong').innerText = options.title ?? 'Уведомление';
+  toast.querySelector('.toast-body>p').innerText = options.content ?? '';
+  $('#toasts').append(toast);
+  $('.toast').on('hidden.bs.toast', function() {$(this).remove();});
+  (new bootstrap.Toast(toast)).show();
+}
+
+function createElementFromHTML(htmlString) {
+  var div = document.createElement('div');
+  div.innerHTML = htmlString.trim();
+
+  // Change this to div.childNodes to support multiple top-level nodes
+  return div.firstChild;
 }
