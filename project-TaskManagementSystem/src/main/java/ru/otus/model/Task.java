@@ -109,8 +109,8 @@ public class Task {
     public String toString() {
         return "Task{" +
                 "id=" + id +
-                ", performer=" + performer +
-                ", creator=" + creator +
+                ", performerId=" + performer.getId() +
+                ", creatorId=" + creator.getId() +
                 ", description='" + description + '\'' +
                 ", expectedResult='" + expectedResult + '\'' +
                 ", expectedDueDate=" + expectedDueDate +

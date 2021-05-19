@@ -24,20 +24,17 @@ public class TaskRestController {
 
     @GetMapping("/api/tasks")
     public ResponseEntity<List<Task>> getAllTasks() {
-        logger.info("getAllTasks()");
         return ResponseEntity.ok(taskService.getAll());
     }
 
     @GetMapping("/api/tasks/{id}")
     public ResponseEntity<Task> getTaskById(@PathVariable(name = "id") Long id) {
         var task = taskService.get(id);
-        logger.info("getTaskById({}): {}", id, task.orElse(null));
         return ResponseEntity.of(task);
     }
 
     @PostMapping("/api/tasks")
     public ResponseEntity<Task> saveTask(@RequestBody TaskDto taskDto) {
-        logger.info("saveTaskDto({})", taskDto);
         return ResponseEntity.of(taskService.save(taskDto));
     }
 

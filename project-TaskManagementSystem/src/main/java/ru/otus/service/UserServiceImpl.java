@@ -26,7 +26,12 @@ public class UserServiceImpl implements UserService {
             logger.info("Invalid user: {}", user);
             return null;
         }
-        return userRepository.save(user);
+        try {
+            return userRepository.save(user);
+        } catch (Throwable t) {
+            logger.warn("t:", t);
+            return null;
+        }
     }
 
     public Optional<User> get(Long id) {

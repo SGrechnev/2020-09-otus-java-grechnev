@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 import ru.otus.dto.ReportDto;
 import ru.otus.model.Report;
 import ru.otus.repository.ReportRepository;
-import ru.otus.repository.TaskRepository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -29,12 +28,12 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public Report save(ReportDto reportDto) throws IllegalArgumentException {
         if (reportDto.getProgress() < Report.PROGRESS_MIN_VALUE || reportDto.getProgress() > Report.PROGRESS_MAX_VALUE) {
-            throw new IllegalArgumentException(String.format("Adding report with progress %d, expected %d..%d",
+            throw new IllegalArgumentException(String.format("Добавление отчета с прогрессом %d%%, ожидается %d ..%d.",
                     reportDto.getProgress(), Report.PROGRESS_MIN_VALUE, Report.PROGRESS_MAX_VALUE));
         }
         var task = taskService.get(reportDto.getTaskId());
         if (task.isEmpty()) {
-            throw new IllegalArgumentException(String.format("Adding report for non-existing task with id %d",
+            throw new IllegalArgumentException(String.format("Добавление отчета для несуществующей задачи с id %d",
                     reportDto.getTaskId()));
         }
         return reportRepository.save(

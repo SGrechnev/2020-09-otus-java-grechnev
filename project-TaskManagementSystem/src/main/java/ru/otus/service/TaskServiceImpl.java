@@ -67,8 +67,6 @@ public class TaskServiceImpl implements TaskService {
         var creator = authenticatedUserInfoService.getAuthenticatedUser();
         var performer = userService.get(taskDto.getPerformerId());
 
-        logger.info("creator: {}", creator);
-        logger.info("performer: {}", performer.orElse(null));
         if (performer.isEmpty() || performer.get().getRole() != Role.ROLE_PERFORMER) {
             return Optional.empty();
         }
@@ -81,7 +79,7 @@ public class TaskServiceImpl implements TaskService {
                 .expectedDueDate(taskDto.getExpectedDueDate())
                 .build();
 
-        logger.info("task: {}", task);
+        logger.info("save task: {}", task);
 
         return Optional.of(taskRepository.save(task));
     }
