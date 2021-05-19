@@ -17,7 +17,7 @@ values
 insert into tasks
     (id,                            creator_id,                                       performer_id,                                       description, expected_result, expected_due_date, progress, actual_due_date)
 values
-    (nextval('hibernate_sequence'), (select id from users where username='manager1'), (select id from users where username='performer1'), 'm1 to p1',  'Result1',       '2021-04-15',      100,      null);
+    (nextval('hibernate_sequence'), (select id from users where username='manager1'), (select id from users where username='performer1'), 'm1 to p1',  'Result1',       '2021-04-15',      100,      '2021-04-13');
 
 insert into tasks
     (id,                            creator_id,                                       performer_id,                                       description, expected_result, expected_due_date, progress, actual_due_date)
@@ -37,7 +37,7 @@ values
 insert into tasks
     (id,                            creator_id,                                       performer_id,                                       description, expected_result, expected_due_date, progress, actual_due_date)
 values
-    (nextval('hibernate_sequence'), (select id from users where username='manager2'), (select id from users where username='performer3'), 'm2 to p3',  'Result5',       '2021-04-24',      0,        '2021-04-21');
+    (nextval('hibernate_sequence'), (select id from users where username='manager2'), (select id from users where username='performer3'), 'm2 to p3',  'Result5',       '2021-04-24',      0,        null);
 
 ------------------
 -- Fill reports --

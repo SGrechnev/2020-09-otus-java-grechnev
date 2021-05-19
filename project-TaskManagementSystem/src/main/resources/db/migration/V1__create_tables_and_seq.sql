@@ -2,7 +2,7 @@ create sequence hibernate_sequence start with 1 increment by 1;
 
 create table users(
     id          bigserial,
-    username    varchar(50) not null,
+    username    varchar(50) not null unique,
     fullname    varchar(50),
     role        varchar(50)
 );
