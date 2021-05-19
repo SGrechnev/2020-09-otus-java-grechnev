@@ -1,0 +1,18 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="headerTemplate" class="d-flex mb-3">
+    <div class="d-flex me-auto p-2">
+        <img src="/favicon.svg" height="42px">
+        <h1>Задачи</h1>
+    </div>
+    <div id="d-flex userInfo">
+        <div class="align-top user-pic">
+            <img id="avatar" src="/person-fill.svg">
+        </div>
+        <div class="text" th:text="${me.fullname}">Fullname</div>
+    </div>
+    <div id="logout">
+        <a href="/logout">
+            <img src="/box-arrow-right.svg" title="Выйти">
+        </a>
+    </div>
+</div>

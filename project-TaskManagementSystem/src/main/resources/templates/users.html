@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>TMS: all users</title>
+
+    <link rel="icon" href="/favicon.svg">
+
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/main.css" rel="stylesheet">
+
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/app.js"></script>
+    <script src="/admin/admin-app.js"></script>
+</head>
+
+<body>
+
+<div class="d-flex mb-3">
+    <div class="d-flex me-auto p-2">
+        <img src="/favicon.svg" height="42px">
+        <h1>Пользователи</h1>
+    </div>
+    <div id="d-flex userInfo">
+        <div class="align-top user-pic">
+            <img id="avatar" src="/person-fill.svg">
+        </div>
+        <div class="text" th:text="${me.fullname}">Fullname</div>
+    </div>
+    <div id="logout">
+        <a href="/logout">
+            <img src="/box-arrow-right.svg" title="Выйти">
+        </a>
+    </div>
+</div>
+
+<pre id="systemMessageContainer"></pre>
+<table class="users" border="1">
+    <thead>
+    <tr bgcolor="#dddddd">
+        <th>Id</th>
+        <th>Username</th>
+        <th>Fullname</th>
+        <th>Role</th>
+    </tr>
+    </thead>
+    <tbody id="userTable">
+        <tr th:each="user : ${users}">
+            <td th:text="${user.id}">123</td>
+            <td th:text="${user.username}">johndoe</td>
+            <td th:text="${user.fullname}">John Doe</td>
+            <td th:text="${user.role}">USER</td>
+        </tr>
+    </tbody>
+</table>
+
+<br>
+
+
+<div id="add-user" class="p-3">
+    <div class="mb-3">
+        <label for="add-user_username" class="col-form-label" style="width:75px">Username</label>
+        <input name="add-user_username" id="add-user_username" style="width:200px">
+    </div>
+    <div class="mb-3">
+        <label for="add-user_fullname" style="width:75px">Fullname</label>
+        <input id="add-user_fullname" style="width:200px">
+    </div>
+    <div class="d-flex mb-3">
+        <label for="add-user_role" style="width:78px">Role</label>
+        <select class="form-control" id="add-user_role" style="width:200px">
+            <option value="ROLE_PERFORMER">Исполнитель</option>
+            <option value="ROLE_MANAGER">Руководитель</option>
+            <option value="ROLE_ADMIN">Администратор</option>
+        </select>
+    </div>
+    <button th:onclick="|addUser();|" type="button" class="btn btn-success" style="width:278px">Добавить пользователя</button>
+</div>
+
+</body>
+</html>
