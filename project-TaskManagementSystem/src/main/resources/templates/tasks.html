@@ -14,7 +14,7 @@
     <script src="/app.js"></script>
 </head>
 
-<body>
+<body onload="addModalListener('deleteConfirmation');">
 
 <div th:with="me=${me}" th:insert="fragments/header :: headerTemplate" th:remove="tag"></div>
 
@@ -27,6 +27,24 @@
             th:remove="tag"></div>
 </div>
 
+<div id="deleteConfirmation" class="modal fade" tabindex="-1" aria-labelledby="deleteConfirmationLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmationLabel">Удалить задачу</h5>
+            </div>
+            <div class="modal-body sr-only">
+                <form>
+                    <input type="text" class="form-control visually-hidden" id="delete-task-id">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Оставить</button>
+                <button type="button" onclick="deleteTask()" class="btn btn-outline-danger" data-dismiss="modal">Удалить</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <pre id="apiErrorMessage"></pre>
 

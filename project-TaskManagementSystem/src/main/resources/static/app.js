@@ -97,6 +97,24 @@ function addTask(creatorId) {
   ).catch(error => fail(error));
 }
 
+function deleteTask() {
+  var taskId = $('#delete-task-id').val();
+  console.log('delete task ', taskId);
+  sendRequest('DELETE', '/api/tasks/' + taskId)
+    .then(response => {
+        if(response == true) {
+          console.log("TODO: delete task");
+          $('#task_'+taskId).slideUp(500, function() { $(this).remove(); });
+          // $('#task_'+taskId).hide('slow', function(){ $('#task_'+taskId).remove(); });
+          // show success modal
+        } else {
+          console.log("TODO: don't delete task");
+          // show error modal
+        }
+      }
+    );
+}
+
 async function sendRequest(method = 'GET', url = '', data = {}) {
   const response = await fetch(url, {
     method: method,
@@ -115,6 +133,19 @@ async function sendRequest(method = 'GET', url = '', data = {}) {
     throw await response.text()
   }
   return await response.json();
+}
+
+function addModalListener(modalId) {
+  $('#deleteConfirmation').on('show.bs.modal', function (event) {
+    // Button that triggered the modal
+    var button = $(event.relatedTarget);
+    // Extract info from data-* attributes
+    var taskId = button.data('task-id');
+    var modal = $(this)
+
+    modal.find('.modal-title').text('Вы уверены, что хотите удалить задачу ' + taskId + '?')
+    modal.find('.modal-body input').val(taskId)
+  })
 }
 
 function showToast(options) {

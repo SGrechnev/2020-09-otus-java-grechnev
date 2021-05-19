@@ -85,6 +85,28 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public boolean delete(Long id) {
+        var task = taskRepository.findById(id);
+
+        if (task.isEmpty()) {
+            logger.warn("Attempt to delete non-existing task (id={})", id);
+            return false;
+        }
+
+        // Задачу может удалить лишь её создатель
+        if (task.get().getCreator() != authenticatedUserInfoService.getAuthenticatedUser()) {
+            logger.warn("Attempt to delete {} by {}. Task can be deleted only by creator!",
+                    task.get(), authenticatedUserInfoService.getAuthenticatedUser());
+            return false;
+        }
+
+        taskRepository.deleteById(id);
+        logger.info("task (id={}) deleted", id);
+
+        return true;
+    }
+
+    @Override
     public void updateProgress(Long taskId, int progress) {
         var oTask = taskRepository.findById(taskId);
         if (oTask.isEmpty()) {

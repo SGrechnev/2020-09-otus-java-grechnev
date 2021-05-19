@@ -27,6 +27,11 @@ public class CustomUserDetailsContextMapper extends LdapUserDetailsMapper {
 
     @Override
     public UserDetails mapUserFromContext(DirContextOperations ctx, String username, Collection<? extends GrantedAuthority> authorities) {
+        logger.info("ctx: {}", ctx);
+        byte[] jpegPhoto = (byte[]) ctx.getObjectAttribute("jpegPhoto");
+        if (jpegPhoto != null) {
+            logger.info("...: {}", jpegPhoto.length);
+        }
         var user = userService.findByUsername(username);
         if (user.isEmpty()) {
             throw new UserNotFoundInLocalDbException("User \"" + username + "\" not found in local database");

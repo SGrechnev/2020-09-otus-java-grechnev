@@ -18,5 +18,7 @@ public interface TaskService {
 
     Optional<Task> save(TaskDto taskDto);
 
+    boolean delete(Long id);
+
     void updateProgress(Long id, int progress);
 }

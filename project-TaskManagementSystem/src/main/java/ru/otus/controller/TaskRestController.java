@@ -38,6 +38,11 @@ public class TaskRestController {
         return ResponseEntity.of(taskService.save(taskDto));
     }
 
+    @DeleteMapping("/api/tasks/{id}")
+    public ResponseEntity<Boolean> deleteTasks(@PathVariable(name = "id") Long id) {
+        return ResponseEntity.ok(taskService.delete(id));
+    }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     private String handleMessageException(Exception e) {
